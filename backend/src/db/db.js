@@ -1,15 +1,24 @@
 const { Pool } = require("pg");
+require("dotenv").config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  host: process.env.PGHOST,
+  port: Number(process.env.PGPORT),
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
+  ssl: {
+    rejectUnauthorized: false
+  },
+  max: 5,
+  connectionTimeoutMillis: 5000,
+  idleTimeoutMillis: 30000
 });
 
-
 async function initDb() {
-  try {
-    console.log("Initializing database...");
+  console.log("Initializing database...");
 
+  try {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -19,7 +28,6 @@ async function initDb() {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-
     console.log("✓ Users table ready");
 
     await pool.query(`
@@ -31,7 +39,6 @@ async function initDb() {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    
     console.log("✓ Shows table ready");
 
     await pool.query(`
@@ -44,7 +51,6 @@ async function initDb() {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-
     console.log("✓ Bookings table ready");
 
     await pool.query(`
@@ -53,15 +59,10 @@ async function initDb() {
     `);
 
     console.log("✓ Database initialization complete");
-
   } catch (err) {
-    console.error("❌ Database initialization error:", err);
+    console.error("Database initialization error:", err);
     throw err;
   }
 }
-
-pool.connect()
-  .then(() => console.log("Connected to Render PostgreSQL"))
-  .catch(err => console.error("❌ PostgreSQL connection error:", err));
 
 module.exports = { pool, initDb };
