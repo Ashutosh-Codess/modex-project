@@ -1,36 +1,18 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const pool = new Pool({
   host: process.env.PGHOST,
   port: Number(process.env.PGPORT),
   user: process.env.PGUSER,
   password: process.env.PGPASSWORD,
   database: process.env.PGDATABASE,
-  ssl: {
-    require: true,
-    rejectUnauthorized: false
-  }
+  ssl: isProduction
+    ? { rejectUnauthorized: false }
+    : false
 });
-
-// Retry logic for Render free Postgres
-async function connectWithRetry(retries = 10, delay = 3000) {
-  while (retries > 0) {
-    try {
-      await pool.connect();
-      console.log("✓ Connected to Render PostgreSQL");
-      return;
-    } catch (err) {
-      console.error(
-        `DB connection failed (${retries} retries left). Retrying in ${delay/1000}s...`,
-        err.message
-      );
-      retries--;
-      await new Promise((res) => setTimeout(res, delay));
-    }
-  }
-  throw new Error("❌ Could not connect to PostgreSQL after multiple retries");
-}
 
 async function initDb() {
   try {
@@ -74,14 +56,12 @@ async function initDb() {
       ALTER TABLE bookings
       ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id) ON DELETE SET NULL
     `);
+
     console.log("✓ Database initialization complete");
   } catch (err) {
     console.error("Database initialization error:", err);
     throw err;
   }
 }
-
-// Start connection
-connectWithRetry();
 
 module.exports = { pool, initDb };
