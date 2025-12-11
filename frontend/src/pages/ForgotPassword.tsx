@@ -111,7 +111,7 @@ export default function ForgotPassword() {
                   type="email"
                   placeholder="Enter your email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e:any) => setEmail(e.target.value)}
                   className={`pl-10 bg-muted/50 border-border/50 focus:border-primary ${error ? 'border-destructive' : ''}`}
                 />
               </div>
