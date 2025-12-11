@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, Lock, User, Film, AlertCircle, CheckCircle } from 'lucide-react';
@@ -207,7 +207,7 @@ export default function Signup() {
                   setName(e.target.value);
                   if (e.target.value) validateName(e.target.value);
                 }}
-                onBlur={() => validateName(name)}
+                
                 style={{
                   width: '100%',
                   padding: '0.875rem 1rem 0.875rem 3rem',
@@ -255,7 +255,7 @@ export default function Signup() {
                   setEmail(e.target.value);
                   if (e.target.value) validateEmail(e.target.value);
                 }}
-                onBlur={() => validateEmail(email)}
+                
                 style={{
                   width: '100%',
                   padding: '0.875rem 1rem 0.875rem 3rem',
@@ -303,7 +303,7 @@ export default function Signup() {
                   setPassword(e.target.value);
                   if (e.target.value) validatePassword(e.target.value);
                 }}
-                onBlur={() => validatePassword(password)}
+                
                 style={{
                   width: '100%',
                   padding: '0.875rem 1rem 0.875rem 3rem',
@@ -390,7 +390,7 @@ export default function Signup() {
               e.currentTarget.style.textDecoration = 'none';
             }}
           >
-            Sign in →
+            Sign in ?
           </a>
         </div>
       </div>

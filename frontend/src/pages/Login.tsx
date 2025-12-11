@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, Lock, Film, AlertCircle, CheckCircle } from 'lucide-react';
@@ -179,7 +179,7 @@ export default function Login() {
                   setEmail(e.target.value);
                   if (e.target.value) validateEmail(e.target.value);
                 }}
-                onBlur={() => validateEmail(email)}
+                
                 style={{
                   width: '100%',
                   padding: '0.875rem 1rem 0.875rem 3rem',
@@ -190,7 +190,7 @@ export default function Login() {
                   transition: 'all 0.2s',
                   background: 'rgba(255,255,255,0.1)',
                   color: 'white',
-                  placeholder: 'rgba(255,255,255,0.5)'
+                  
                 }}
                 onFocus={(e) => {
                   e.currentTarget.style.borderColor = emailError ? '#dc3545' : '#8b0000';
@@ -304,7 +304,7 @@ export default function Login() {
               e.currentTarget.style.textDecoration = 'none';
             }}
           >
-            Create an account →
+            Create an account ?
           </a>
         </div>
       </div>
