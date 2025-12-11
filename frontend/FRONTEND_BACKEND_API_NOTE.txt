@@ -1,0 +1,4 @@
+﻿# Backend endpoints expected by frontend:
+# POST /auth/login    -> { token, user }
+# POST /auth/signup   -> { token, user }
+# GET  /me           -> returns current user (requires Authorization: Bearer <token>)
