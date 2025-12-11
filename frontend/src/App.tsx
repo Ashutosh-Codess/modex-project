@@ -1,8 +1,7 @@
 ﻿import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-// Removed react-query as it's not essential for basic functionality
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { BookingProvider } from "@/contexts/BookingContext";
 import { ParticlesBG } from "@/components/ParticlesBG";
@@ -22,28 +21,26 @@ const App = () => (
       <BookingProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <div className="relative min-h-screen bg-background">
-            <ParticlesBG />
-            <Topbar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/booking/:id" element={<Booking />} />
-              <Route 
-                path="/admin" 
-                element={
-                  <ProtectedRoute>
-                    <Admin />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
+        <div className="relative min-h-screen bg-background text-foreground">
+          <ParticlesBG />
+          <Topbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/booking/:id" element={<Booking />} />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
       </BookingProvider>
     </AuthProvider>
   </TooltipProvider>

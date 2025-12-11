@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 245 247 251;
+    --foreground: 31 31 31;
+    --card: 255 255 255;
+    --card-foreground: 31 31 31;
+    --popover: 255 255 255;
+    --popover-foreground: 31 31 31;
+    --primary: 230 0 35;
+    --primary-foreground: 255 255 255;
+    --secondary: 245 247 251;
+    --secondary-foreground: 31 31 31;
+    --muted: 245 247 251;
+    --muted-foreground: 85 95 115;
+    --accent: 255 138 92;
+    --accent-foreground: 31 31 31;
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
+    --border: 228 230 237;
+    --input: 228 230 237;
+    --ring: 230 0 35;
+    --radius: 0.75rem;
+  }
+  
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
 :root {
   --bg: #f5f7fb;
   --panel: #ffffff;
@@ -113,3 +146,24 @@ body {
   color: var(--primary);
 }
 
+.glass-hover {
+  transition: all 0.3s ease;
+}
+.glass-hover:hover {
+  background: rgba(255,255,255,0.95);
+  border-color: rgba(230,0,35,0.2);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, hsl(var(--primary)), #ff5f6d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, hsl(var(--primary)), #ff5f6d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
