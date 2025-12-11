@@ -44,10 +44,10 @@ async function seedShows() {
 
     for (const show of shows) {
       await pool.query(
-        "INSERT INTO shows (name, start_time, total_seats) VALUES ($1, $2, $3)",
+        "INSERT INTO shows (name, start_time, total_seats) VALUES ($1, $2, $3) RETURNING *",
         [show.name, show.start_time, show.total_seats]
       );
-      console.log(`✓ Added: ${show.name}`);
+      console.log(`✓ Added: ${show.name} (${show.total_seats} seats)`);
     }
 
     console.log("✅ Sample shows seeded successfully!");
