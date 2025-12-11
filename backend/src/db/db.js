@@ -4,14 +4,8 @@ require("dotenv").config();
 const isProduction = process.env.NODE_ENV === "production";
 
 const pool = new Pool({
-  host: process.env.PGHOST,
-  port: Number(process.env.PGPORT),
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  database: process.env.PGDATABASE,
-  ssl: isProduction
-    ? { rejectUnauthorized: false }
-    : false
+  connectionString: process.env.DATABASE_URL,
+  ssl: isProduction ? { rejectUnauthorized: false } : false
 });
 
 async function initDb() {
