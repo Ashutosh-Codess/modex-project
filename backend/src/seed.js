@@ -5,12 +5,9 @@ async function seedShows() {
   try {
     console.log("Seeding sample shows...");
 
-    // Check if shows already exist
-    const existing = await pool.query("SELECT COUNT(*) FROM shows");
-    if (parseInt(existing.rows[0].count) > 0) {
-      console.log("Shows already exist. Skipping seed.");
-      return;
-    }
+    // Clear existing shows to add fresh ones
+    await pool.query("DELETE FROM shows");
+    console.log("Cleared existing shows");
 
     const shows = [
       {

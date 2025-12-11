@@ -1,52 +1,57 @@
-# GitHub Setup Instructions
+# 📦 Push to GitHub - Step by Step
 
-## Step 1: Initialize Git (if not already done)
+## ⚠️ IMPORTANT: Create Repository First!
 
-```bash
-git init
-```
+The repository doesn't exist yet. Follow these steps:
 
-## Step 2: Add All Files
+### Step 1: Create GitHub Repository
 
-```bash
-git add .
-```
-
-## Step 3: Create Initial Commit
-
-```bash
-git commit -m "Initial commit - Modex Ticket Booking System"
-```
-
-## Step 4: Create Repository on GitHub
-
-1. Go to https://github.com/new
-2. Repository name: `modex-project` (or any name you prefer)
-3. Description: "Full-stack ticket booking system"
-4. Choose Public or Private
-5. **DO NOT** initialize with README, .gitignore, or license (we already have these)
+1. Go to: https://github.com/new
+2. Repository name: `modex-project`
+3. Description: "Movie Ticket Booking System - Full Stack Application"
+4. Visibility: Public (or Private)
+5. **DO NOT** initialize with README, .gitignore, or license
 6. Click "Create repository"
 
-## Step 5: Connect and Push
+### Step 2: Push Your Code
 
-```bash
-git remote add origin https://github.com/Ashutosh-Codess/modex-project.git
-git branch -M main
+After creating the repository, run:
+
+```powershell
+cd C:\Users\ashu1\Desktop\modex-project
 git push -u origin main
 ```
 
-If you get authentication errors, use:
-```bash
-git remote add origin git@github.com:Ashutosh-Codess/modex-project.git
-```
+### Step 3: Verify
 
-## Step 6: Verify
+Check: https://github.com/Ashutosh-Codess/modex-project
 
-Check https://github.com/Ashutosh-Codess/modex-project to see your code!
+You should see all your files!
 
-## Troubleshooting
+## ✅ After Pushing:
 
-- **Authentication error**: Set up SSH keys or use GitHub CLI
-- **Large files**: Make sure .gitignore excludes node_modules and dist folders
-- **Push rejected**: Pull first: `git pull origin main --rebase`
+1. **Deploy Backend to Railway:**
+   - Go to: https://railway.app
+   - New Project → Deploy from GitHub
+   - Select: `modex-project`
+   - Root: `backend`
+   - Add PostgreSQL
+   - Set environment variables
 
+2. **Deploy Frontend to Vercel:**
+   - Go to: https://vercel.com
+   - Import: `Ashutosh-Codess/modex-project`
+   - Root: `frontend`
+   - Build: `npm run build`
+   - Output: `dist`
+   - Add `VITE_API_URL` = Railway backend URL
+
+## 🎬 Sample Shows Added:
+- The Dark Knight
+- Inception
+- Interstellar
+- The Matrix
+- Avatar
+- Avengers: Endgame
+
+Refresh your browser to see them!
