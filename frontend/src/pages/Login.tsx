@@ -1,145 +1,311 @@
-﻿import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
+﻿import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { Mail, Lock, Film, AlertCircle, CheckCircle } from 'lucide-react';
 
 export default function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-  
-  const { login, isLoading } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { toast } = useToast();
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
+  const [err, setErr] = useState('');
+  const [msg, setMsg] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [emailError, setEmailError] = useState('');
 
-  const validate = () => {
-    const newErrors: { email?: string; password?: string } = {};
-    
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email';
+      setEmailError('Email is required');
+      return false;
+    }
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErr('');
+    setMsg('');
+    
+    if (!validateEmail(email)) {
+      return;
     }
     
     if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      setErr('Password is required');
+      return;
     }
     
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validate()) return;
-    
+    setBusy(true);
     try {
       await login(email, password);
-      toast({
-        title: 'Welcome back!',
-        description: 'You have successfully logged in.',
-      });
-      navigate(from, { replace: true });
-    } catch (error: any) {
-      toast({
-        title: 'Login failed',
-        description: error?.response?.data?.error || 'Invalid credentials',
-        variant: 'destructive',
-      });
+      setMsg('Login successful! Redirecting...');
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (e: any) {
+      const errorMsg = e?.response?.data?.error || 'Login failed. Please check your credentials.';
+      setErr(errorMsg);
     }
+    setBusy(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 pt-20">
-      <div className="w-full max-w-md">
-        <div className="glass rounded-3xl p-8 space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gradient">Welcome Back</h1>
-            <p className="text-muted-foreground">Sign in to continue booking</p>
+    <div style={{
+      minHeight: '100vh',
+      backgroundImage: 'url(https://png.pngtree.com/background/20230426/original/pngtree-cinema-movie-theater-background-picture-image_2477892.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem',
+      paddingTop: '100px',
+      position: 'relative'
+    }}>
+      {/* Dark overlay */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0,0,0,0.7)',
+        zIndex: 1
+      }} />
+      
+      <div style={{
+        background: 'rgba(139, 0, 0, 0.95)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '24px',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+        maxWidth: '450px',
+        width: '100%',
+        padding: '3rem',
+        position: 'relative',
+        zIndex: 2,
+        border: '2px solid rgba(255,255,255,0.1)'
+      }}>
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{
+            width: '70px',
+            height: '70px',
+            margin: '0 auto 1rem',
+            borderRadius: '16px',
+            background: 'linear-gradient(135deg, #8b0000, #dc143c)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 8px 24px rgba(139,0,0,0.5)'
+          }}>
+            <Film style={{ width: '36px', height: '36px', color: 'white' }} />
+          </div>
+          <h1 style={{
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            marginBottom: '0.5rem',
+            color: 'white'
+          }}>
+            Welcome Back
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.95rem' }}>
+            Sign in to continue booking your favorite movies
+          </p>
+        </div>
+
+        {/* Error Message */}
+        {err && (
+          <div style={{
+            background: 'rgba(220, 53, 69, 0.2)',
+            border: '1px solid #dc3545',
+            borderRadius: '8px',
+            padding: '0.75rem',
+            marginBottom: '1rem',
+            color: '#ff6b6b',
+            fontSize: '0.9rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <AlertCircle style={{ width: '18px', height: '18px', flexShrink: 0 }} />
+            <span>{err}</span>
+          </div>
+        )}
+
+        {/* Success Message */}
+        {msg && (
+          <div style={{
+            background: 'rgba(40, 167, 69, 0.2)',
+            border: '1px solid #28a745',
+            borderRadius: '8px',
+            padding: '0.75rem',
+            marginBottom: '1rem',
+            color: '#51cf66',
+            fontSize: '0.9rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <CheckCircle style={{ width: '18px', height: '18px', flexShrink: 0 }} />
+            <span>{msg}</span>
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div>
+            <div style={{ position: 'relative' }}>
+              <Mail style={{
+                position: 'absolute',
+                left: '16px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '20px',
+                height: '20px',
+                color: emailError ? '#ff6b6b' : '#999'
+              }} />
+              <input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (e.target.value) validateEmail(e.target.value);
+                }}
+                onBlur={() => validateEmail(email)}
+                style={{
+                  width: '100%',
+                  padding: '0.875rem 1rem 0.875rem 3rem',
+                  border: `2px solid ${emailError ? '#dc3545' : '#444'}`,
+                  borderRadius: '12px',
+                  fontSize: '1rem',
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                  background: 'rgba(255,255,255,0.1)',
+                  color: 'white',
+                  placeholder: 'rgba(255,255,255,0.5)'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = emailError ? '#dc3545' : '#8b0000';
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139,0,0,0.2)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = emailError ? '#dc3545' : '#444';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              />
+            </div>
+            {emailError && (
+              <p style={{ color: '#ff6b6b', fontSize: '0.875rem', marginTop: '0.5rem', marginLeft: '4px' }}>
+                {emailError}
+              </p>
+            )}
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={`pl-10 bg-muted/50 border-border/50 focus:border-primary ${errors.email ? 'border-destructive' : ''}`}
-                />
-              </div>
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={`pl-10 pr-10 bg-muted/50 border-border/50 focus:border-primary ${errors.password ? 'border-destructive' : ''}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password}</p>
-              )}
-            </div>
-            <div className="flex items-center justify-end">
-              <Link
-                to="/forgot-password"
-                className="text-sm text-primary hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
-            <Button
-              type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-12"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign In'
-              )}
-            </Button>
-          </form>
+          <div style={{ position: 'relative' }}>
+            <Lock style={{
+              position: 'absolute',
+              left: '16px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '20px',
+              height: '20px',
+              color: '#999'
+            }} />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.875rem 1rem 0.875rem 3rem',
+                border: '2px solid #444',
+                borderRadius: '12px',
+                fontSize: '1rem',
+                outline: 'none',
+                transition: 'all 0.2s',
+                background: 'rgba(255,255,255,0.1)',
+                color: 'white'
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#8b0000';
+                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139,0,0,0.2)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = '#444';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            />
+          </div>
 
-          <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
-            <Link to="/signup" className="text-primary hover:underline font-medium">
-              Sign up
-            </Link>
+          <button
+            type="submit"
+            disabled={busy || !!emailError}
+            style={{
+              width: '100%',
+              padding: '1rem',
+              background: busy || emailError ? '#555' : 'linear-gradient(135deg, #8b0000, #dc143c)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              fontSize: '1.05rem',
+              fontWeight: '600',
+              cursor: busy || emailError ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s',
+              boxShadow: busy || emailError ? 'none' : '0 4px 12px rgba(139,0,0,0.4)',
+              marginTop: '0.5rem'
+            }}
+            onMouseEnter={(e) => {
+              if (!busy && !emailError) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 16px rgba(139,0,0,0.5)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!busy && !emailError) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(139,0,0,0.4)';
+              }
+            }}
+          >
+            {busy ? 'Logging in...' : 'Sign In'}
+          </button>
+        </form>
+
+        <div style={{
+          textAlign: 'center',
+          marginTop: '1.5rem',
+          paddingTop: '1.5rem',
+          borderTop: '1px solid rgba(255,255,255,0.1)'
+        }}>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+            Don't have an account?
           </p>
+          <a
+            href="/signup"
+            style={{
+              color: '#ff6b6b',
+              textDecoration: 'none',
+              fontWeight: '600',
+              fontSize: '0.95rem'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.textDecoration = 'underline';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.textDecoration = 'none';
+            }}
+          >
+            Create an account →
+          </a>
         </div>
       </div>
     </div>

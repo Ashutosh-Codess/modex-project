@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface Particle {
   x: number;
@@ -113,3 +113,5 @@ export function ParticlesBG() {
     />
   );
 }
+
+// override background\nconst overrideStyle = { background: 'transparent' };\n

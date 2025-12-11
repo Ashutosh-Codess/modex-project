@@ -13,37 +13,41 @@ import Signup from "@/pages/Signup";
 import ForgotPassword from "@/pages/ForgotPassword";
 import Admin from "@/pages/Admin";
 import Booking from "@/pages/Booking";
+import MyBookings from "@/pages/MyBookings";
 import NotFound from "@/pages/NotFound";
 
-const App = () => (
-  <TooltipProvider>
-    <AuthProvider>
-      <BookingProvider>
-        <Toaster />
-        <Sonner />
-        <div className="relative min-h-screen bg-background text-foreground">
-          <ParticlesBG />
-          <Topbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/booking/:id" element={<Booking />} />
-            <Route 
-              path="/admin" 
-              element={
-                <ProtectedRoute>
-                  <Admin />
-                </ProtectedRoute>
-              } 
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </BookingProvider>
-    </AuthProvider>
-  </TooltipProvider>
-);
+const App = () => {
+  return (
+    <TooltipProvider>
+      <AuthProvider>
+        <BookingProvider>
+          <Toaster />
+          <Sonner />
+          <div style={{ position: 'relative', minHeight: '100vh', background: '#f5f7fb', color: '#1f1f1f' }}>
+            <ParticlesBG />
+            <Topbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/booking/:id" element={<Booking />} />
+              <Route path="/my-bookings" element={<MyBookings />} />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute>
+                    <Admin />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </BookingProvider>
+      </AuthProvider>
+    </TooltipProvider>
+  );
+};
 
 export default App;

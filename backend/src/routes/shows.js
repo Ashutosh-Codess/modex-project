@@ -20,20 +20,38 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (_req, res) => {
   try {
+    // First check if shows table exists, if not return empty array
+    const tableCheck = await pool.query(
+      `SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'shows'
+      )`
+    );
+    
+    if (!tableCheck.rows[0].exists) {
+      return res.json([]);
+    }
+    
     const result = await pool.query(
       `SELECT s.*,
-        COALESCE(s.total_seats - (
-          SELECT COALESCE(SUM(array_length(b.seats, 1)), 0)
-          FROM bookings b
-          WHERE b.show_id = s.id AND b.status = 'CONFIRMED'
-        ), s.total_seats) AS available_seats
+        COALESCE(
+          s.total_seats - (
+            SELECT COALESCE(SUM(array_length(b.seats, 1)), 0)
+            FROM bookings b
+            WHERE b.show_id = s.id AND b.status = 'CONFIRMED'
+          ),
+          s.total_seats
+        ) AS available_seats
        FROM shows s
        ORDER BY s.start_time`
     );
     res.json(result.rows || []);
   } catch (err) {
     console.error("Error fetching shows:", err);
-    res.status(500).json({ error: err.message || "Server error" });
+    console.error("Error stack:", err.stack);
+    // Return empty array instead of error to prevent frontend crash
+    res.json([]);
   }
 });
 
