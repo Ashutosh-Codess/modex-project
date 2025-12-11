@@ -2,17 +2,20 @@ const { Pool } = require("pg");
 require("dotenv").config();
 
 const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  user: process.env.DB_USER,
-  password: String(process.env.DB_PASSWORD),
-  database: process.env.DB_NAME,
+  host: process.env.PGHOST,
+  port: Number(process.env.PGPORT),
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 async function initDb() {
   try {
     console.log("Initializing database...");
-    
+
     await pool.query(
       `CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -58,9 +61,8 @@ async function initDb() {
   }
 }
 
-pool
-  .connect()
-  .then(() => console.log("Connected to PostgreSQL"))
-  .catch((err) => console.error("PostgreSQL connection error:", err));
+pool.connect()
+  .then(() => console.log("Connected to Render PostgreSQL"))
+  .catch(err => console.error("PostgreSQL connection error:", err));
 
 module.exports = { pool, initDb };
