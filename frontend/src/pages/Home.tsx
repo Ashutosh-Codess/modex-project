@@ -23,7 +23,9 @@ export default function Home() {
   const [sortBy, setSortBy] = useState('date');
 
   useEffect(() => {
-    fetchShows();
+    fetchShows().catch((err) => {
+      console.error("Failed to fetch shows:", err);
+    });
   }, [fetchShows]);
 
   const filteredShows = shows
@@ -99,6 +101,12 @@ export default function Home() {
           </div>
         </div>
 
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            <p className="font-medium">Error loading shows: {error}</p>
+            <p className="text-sm mt-1">Make sure the backend server is running on port 4000</p>
+          </div>
+        )}
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />

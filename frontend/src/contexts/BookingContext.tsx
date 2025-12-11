@@ -49,18 +49,22 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     
     try {
       const res = await api.get('/shows');
-      const backendShows = res.data || [];
+      const backendShows = Array.isArray(res.data) ? res.data : [];
       const mappedShows = backendShows.map(mapBackendShowToFrontend);
       setState(prev => ({
         ...prev,
         shows: mappedShows,
         isLoading: false,
+        error: null,
       }));
     } catch (error: any) {
+      console.error("Error fetching shows:", error);
+      const errorMessage = error?.response?.data?.error || error?.message || 'Failed to fetch shows';
       setState(prev => ({
         ...prev,
         isLoading: false,
-        error: error?.response?.data?.error || 'Failed to fetch shows',
+        error: errorMessage,
+        shows: [], // Set empty array on error
       }));
     }
   }, []);

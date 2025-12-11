@@ -22,15 +22,18 @@ router.get("/", async (_req, res) => {
   try {
     const result = await pool.query(
       `SELECT s.*,
-        s.total_seats - COALESCE(SUM(cardinality(b.seats)), 0) AS available_seats
+        COALESCE(s.total_seats - (
+          SELECT COALESCE(SUM(array_length(b.seats, 1)), 0)
+          FROM bookings b
+          WHERE b.show_id = s.id AND b.status = 'CONFIRMED'
+        ), s.total_seats) AS available_seats
        FROM shows s
-       LEFT JOIN bookings b ON b.show_id = s.id AND b.status = 'CONFIRMED'
-       GROUP BY s.id
        ORDER BY s.start_time`
     );
-    res.json(result.rows);
+    res.json(result.rows || []);
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
+    console.error("Error fetching shows:", err);
+    res.status(500).json({ error: err.message || "Server error" });
   }
 });
 
