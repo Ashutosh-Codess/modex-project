@@ -27,7 +27,7 @@ export function Topbar() {
       left: 0,
       right: 0,
       zIndex: 1000,
-      background: 'linear-gradient(135deg, #e60023 0%, #ff5f6d 100%)',
+      background: 'linear-gradient(135deg, #ff8c00 0%, #ffa500 100%)',
       borderBottom: 'none',
       padding: '0',
       height: '70px',

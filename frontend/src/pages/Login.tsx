@@ -179,7 +179,6 @@ export default function Login() {
                   setEmail(e.target.value);
                   if (e.target.value) validateEmail(e.target.value);
                 }}
-                
                 style={{
                   width: '100%',
                   padding: '0.875rem 1rem 0.875rem 3rem',
@@ -189,14 +188,14 @@ export default function Login() {
                   outline: 'none',
                   transition: 'all 0.2s',
                   background: 'rgba(255,255,255,0.1)',
-                  color: 'white',
-                  
+                  color: 'white'
                 }}
                 onFocus={(e) => {
                   e.currentTarget.style.borderColor = emailError ? '#dc3545' : '#8b0000';
                   e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139,0,0,0.2)';
                 }}
                 onBlur={(e) => {
+                  validateEmail(email);
                   e.currentTarget.style.borderColor = emailError ? '#dc3545' : '#444';
                   e.currentTarget.style.boxShadow = 'none';
                 }}
@@ -304,7 +303,7 @@ export default function Login() {
               e.currentTarget.style.textDecoration = 'none';
             }}
           >
-            Create an account ?
+            Create an account →
           </a>
         </div>
       </div>

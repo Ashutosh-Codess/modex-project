@@ -14,7 +14,7 @@ export default function Home() {
   const [sortBy, setSortBy] = useState('date');
 
   useEffect(() => {
-    fetchShows().catch((err:any) => {
+    fetchShows().catch((err) => {
       console.error("Failed to fetch shows:", err);
     });
   }, [fetchShows]);
@@ -138,7 +138,7 @@ export default function Home() {
               fontSize: '0.875rem',
               color: 'rgba(255,255,255,0.9)'
             }}>
-              ?? {selectedLocation}
+              📍 {selectedLocation}
             </div>
             <h1 style={{
               fontSize: '3.5rem',
@@ -162,10 +162,10 @@ export default function Home() {
                 {shows[0].genre}
               </span>
               <span style={{ color: 'white', fontSize: '0.875rem' }}>
-                ? {shows[0].duration}
+                ⏱ {shows[0].duration}
               </span>
               <span style={{ color: 'white', fontSize: '0.875rem' }}>
-                ?? ${shows[0].price}
+                💰 ${shows[0].price}
               </span>
             </div>
             <Link to={`/booking/${shows[0].id}`} style={{ textDecoration: 'none', display: 'inline-block' }}>
@@ -191,7 +191,7 @@ export default function Home() {
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
               }}>
-                Book Now ?
+                Book Now →
               </button>
             </Link>
           </div>
@@ -224,10 +224,10 @@ export default function Home() {
               marginBottom: '0.5rem',
               color: 'white'
             }}>
-              Now Showing in {selectedLocation}
+              Now Showing
             </h2>
             <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1rem' }}>
-              Book your favorite movies now
+              Browse our latest movies and book your seats for an unforgettable cinema experience
             </p>
           </div>
         )}

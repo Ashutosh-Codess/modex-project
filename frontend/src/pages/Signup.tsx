@@ -207,7 +207,6 @@ export default function Signup() {
                   setName(e.target.value);
                   if (e.target.value) validateName(e.target.value);
                 }}
-                
                 style={{
                   width: '100%',
                   padding: '0.875rem 1rem 0.875rem 3rem',
@@ -224,6 +223,7 @@ export default function Signup() {
                   e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139,0,0,0.2)';
                 }}
                 onBlur={(e) => {
+                  validateName(name);
                   e.currentTarget.style.borderColor = nameError ? '#dc3545' : '#444';
                   e.currentTarget.style.boxShadow = 'none';
                 }}
@@ -255,7 +255,6 @@ export default function Signup() {
                   setEmail(e.target.value);
                   if (e.target.value) validateEmail(e.target.value);
                 }}
-                
                 style={{
                   width: '100%',
                   padding: '0.875rem 1rem 0.875rem 3rem',
@@ -272,6 +271,7 @@ export default function Signup() {
                   e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139,0,0,0.2)';
                 }}
                 onBlur={(e) => {
+                  validateEmail(email);
                   e.currentTarget.style.borderColor = emailError ? '#dc3545' : '#444';
                   e.currentTarget.style.boxShadow = 'none';
                 }}
@@ -303,7 +303,6 @@ export default function Signup() {
                   setPassword(e.target.value);
                   if (e.target.value) validatePassword(e.target.value);
                 }}
-                
                 style={{
                   width: '100%',
                   padding: '0.875rem 1rem 0.875rem 3rem',
@@ -320,6 +319,7 @@ export default function Signup() {
                   e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139,0,0,0.2)';
                 }}
                 onBlur={(e) => {
+                  validatePassword(password);
                   e.currentTarget.style.borderColor = passwordError ? '#dc3545' : '#444';
                   e.currentTarget.style.boxShadow = 'none';
                 }}
@@ -390,7 +390,7 @@ export default function Signup() {
               e.currentTarget.style.textDecoration = 'none';
             }}
           >
-            Sign in ?
+            Sign in →
           </a>
         </div>
       </div>
