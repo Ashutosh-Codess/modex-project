@@ -1,18 +1,30 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  user: process.env.DB_USER,
-  password: String(process.env.DB_PASSWORD),
-  database: process.env.DB_NAME,
-});
+const isProduction = process.env.NODE_ENV === "production";
+
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: isProduction
+          ? { rejectUnauthorized: false }
+          : false
+      }
+    : {
+        host: process.env.DB_HOST || "localhost",
+        port: Number(process.env.DB_PORT) || 5432,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        ssl: false
+      }
+);
 
 async function initDb() {
   try {
     console.log("Initializing database...");
-    
+
     await pool.query(
       `CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -49,18 +61,21 @@ async function initDb() {
 
     await pool.query(
       `ALTER TABLE bookings
-       ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id) ON DELETE SET NULL`
+       ADD COLUMN IF NOT EXISTS user_id INTEGER
+       REFERENCES users(id) ON DELETE SET NULL`
     );
     console.log("✓ Database initialization complete");
   } catch (err) {
-    console.error("Database initialization error:", err);
+    console.error("Database initialization error:", err.message);
     throw err;
   }
 }
 
 pool
-  .connect()
+  .query("SELECT 1")
   .then(() => console.log("Connected to PostgreSQL"))
-  .catch((err) => console.error("PostgreSQL connection error:", err));
+  .catch((err) =>
+    console.error("PostgreSQL connection error:", err.message)
+  );
 
 module.exports = { pool, initDb };
