@@ -2,95 +2,95 @@ const express = require("express");
 const router = express.Router();
 const { pool } = require("../db/db");
 
+/**
+ * CREATE A SHOW
+ * POST /shows
+ */
 router.post("/", async (req, res) => {
   try {
     const { name, start_time, total_seats } = req.body;
+
     if (!name || !start_time || !total_seats) {
       return res.status(400).json({ error: "Missing fields" });
     }
+
     const result = await pool.query(
-      "INSERT INTO shows (name, start_time, total_seats) VALUES ($1, $2, $3) RETURNING *",
+      `INSERT INTO shows (name, start_time, total_seats)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
       [name, start_time, total_seats]
     );
-    res.json(result.rows[0]);
+
+    res.status(201).json(result.rows[0]);
   } catch (err) {
+    console.error("Error creating show:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
 
+/**
+ * GET ALL SHOWS
+ * GET /shows
+ */
 router.get("/", async (_req, res) => {
   try {
-    // First check if shows table exists, if not return empty array
-    const tableCheck = await pool.query(
-      `SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_schema = 'public' 
-        AND table_name = 'shows'
-      )`
-    );
-    
-    if (!tableCheck.rows[0].exists) {
-      return res.json([]);
-    }
-    
     const result = await pool.query(
-      `SELECT s.*,
-        COALESCE(
-          s.total_seats - (
-            SELECT COALESCE(SUM(array_length(b.seats, 1)), 0)
-            FROM bookings b
-            WHERE b.show_id = s.id AND b.status = 'CONFIRMED'
-          ),
-          s.total_seats
-        ) AS available_seats
-       FROM shows s
-       ORDER BY s.start_time`
+      `SELECT id, name, start_time, total_seats
+       FROM shows
+       ORDER BY start_time ASC`
     );
-    res.json(result.rows || []);
-  } catch (err) {
-    console.error("Error fetching shows:", err);
-    console.error("Error stack:", err.stack);
-    // Return empty array instead of error to prevent frontend crash
-    res.json([]);
-  }
-});
 
-router.get("/:id", async (req, res) => {
-  try {
-    const show = await pool.query("SELECT * FROM shows WHERE id=$1", [
-      req.params.id,
-    ]);
-    if (show.rows.length === 0) {
-      return res.status(404).json({ error: "Show not found" });
-    }
-    const booked = await pool.query(
-      `SELECT COALESCE(array_agg(DISTINCT seat), '{}') AS seats
-       FROM (SELECT unnest(seats) AS seat FROM bookings WHERE show_id=$1 AND status='CONFIRMED') t`,
-      [req.params.id]
-    );
-    const bookedSeats = booked.rows[0].seats || [];
-    const availableSeats =
-      show.rows[0].total_seats - (bookedSeats ? bookedSeats.length : 0);
-    res.json({
-      ...show.rows[0],
-      booked_seats: bookedSeats,
-      available_seats: availableSeats,
-    });
+    res.json(result.rows);
   } catch (err) {
+    console.error("Error fetching shows:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-router.delete("/:id", async (req, res) => {
+/**
+ * GET SINGLE SHOW BY ID
+ * GET /shows/:id
+ */
+router.get("/:id", async (req, res) => {
   try {
-    const result = await pool.query("DELETE FROM shows WHERE id=$1 RETURNING *", [
-      req.params.id,
-    ]);
+    const result = await pool.query(
+      `SELECT id, name, start_time, total_seats
+       FROM shows
+       WHERE id = $1`,
+      [req.params.id]
+    );
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Show not found" });
     }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching show:", err.message);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+/**
+ * DELETE SHOW
+ * DELETE /shows/:id
+ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `DELETE FROM shows
+       WHERE id = $1
+       RETURNING *`,
+      [req.params.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Show not found" });
+    }
+
     res.json({ message: "Show deleted successfully" });
   } catch (err) {
+    console.error("Error deleting show:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
