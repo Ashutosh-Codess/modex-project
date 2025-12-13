@@ -10,6 +10,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ✅ Health check (MANDATORY for Render)
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 app.get("/", (req, res) => {
   res.send("Backend server is running");
 });
@@ -22,16 +27,21 @@ const PORT = process.env.PORT || 4000;
 const expiryMs = 2 * 60 * 1000;
 
 async function expirePending() {
-  await pool.query(
-    "UPDATE bookings SET status='FAILED' WHERE status='PENDING' AND created_at < NOW() - INTERVAL '2 minutes'"
-  );
+  try {
+    await pool.query(
+      "UPDATE bookings SET status='FAILED' WHERE status='PENDING' AND created_at < NOW() - INTERVAL '2 minutes'"
+    );
+  } catch (err) {
+    console.error("Expire job failed:", err.message);
+  }
 }
 
 initDb()
   .then(() => {
     app.listen(PORT, () => {
-      console.log("Server running on http://localhost:" + PORT);
+      console.log(`Server running on port ${PORT}`);
     });
+
     setInterval(expirePending, expiryMs);
   })
   .catch((err) => {
