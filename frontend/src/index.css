@@ -53,6 +53,10 @@ body {
   background: #f5f7fb;
   color: var(--text);
   min-height: 100vh;
+  background-image: url('/cinema-bg.jpg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .section {

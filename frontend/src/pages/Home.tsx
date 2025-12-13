@@ -40,12 +40,12 @@ export default function Home() {
       }
     });
 
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('Mumbai');
 
   return (
     <div style={{ 
       minHeight: '100vh', 
-      backgroundImage: 'url(https://png.pngtree.com/background/20230426/original/pngtree-cinema-movie-theater-background-picture-image_2477892.jpg)',
+      backgroundImage: 'url(/cinema-bg.jpg.png)',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'cover',
       backgroundPosition: 'center',

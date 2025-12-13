@@ -19,11 +19,18 @@ const DEFAULT_VENUE = 'Screen 1';
 const DEFAULT_GENRE = 'Drama';
 const DEFAULT_DURATION = '2h 0m';
 
+const fallbackPosters = [
+  'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1464375117522-1311d6a5b81f?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&auto=format&fit=crop&q=80',
+];
+
 function mapBackendShowToFrontend(backendShow: any): Show {
   return {
     id: backendShow.id,
     name: backendShow.name,
-    posterUrl: `/placeholder.svg`,
+    posterUrl: backendShow.poster_url || fallbackPosters[backendShow.id % fallbackPosters.length] || `/placeholder.svg`,
     startTime: backendShow.start_time,
     totalSeats: backendShow.total_seats,
     availableSeats: backendShow.available_seats || backendShow.total_seats,
@@ -60,11 +67,51 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     } catch (error: any) {
       console.error("Error fetching shows:", error);
       const errorMessage = error?.response?.data?.error || error?.message || 'Failed to fetch shows';
+      // Fallback demo shows so UI is never empty
+      const demoNow = Date.now();
+      const demoShows: Show[] = [
+        {
+          id: 101,
+          name: 'The Dark Knight',
+          posterUrl: fallbackPosters[0],
+          startTime: new Date(demoNow + 3600_000).toISOString(),
+          totalSeats: 120,
+          availableSeats: 120,
+          price: 12.99,
+          venue: 'Screen 1',
+          genre: 'Action',
+          duration: '2h 32m',
+        },
+        {
+          id: 102,
+          name: 'Inception',
+          posterUrl: fallbackPosters[1],
+          startTime: new Date(demoNow + 7200_000).toISOString(),
+          totalSeats: 150,
+          availableSeats: 150,
+          price: 13.5,
+          venue: 'Screen 2',
+          genre: 'Sci-Fi',
+          duration: '2h 28m',
+        },
+        {
+          id: 103,
+          name: 'La La Land',
+          posterUrl: fallbackPosters[2],
+          startTime: new Date(demoNow + 10800_000).toISOString(),
+          totalSeats: 100,
+          availableSeats: 100,
+          price: 11.0,
+          venue: 'Screen 3',
+          genre: 'Drama',
+          duration: '2h 8m',
+        },
+      ];
       setState(prev => ({
         ...prev,
         isLoading: false,
         error: errorMessage,
-        shows: [], // Set empty array on error
+        shows: demoShows,
       }));
     }
   }, []);
